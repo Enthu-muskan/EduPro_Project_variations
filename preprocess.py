@@ -1,30 +1,66 @@
+# preprocess.py
 import pandas as pd
+import numpy as np
 import os
+import sys
 
-print("🚀 Starting preprocessing...")
+# -------------------
+# Step 1: Path Setup
+# -------------------
+# Path to your raw dataset (update this to your actual file)
+RAW_FILE = r"C:\Users\hp\Downloads\EduPro Online Platform.xlsx - Users.csv"
 
-# Correct path (FIXED)
-input_path = r"C:\Users\hp\Downloads\EduPro Online Platform.xlsx - Users.csv"
+# Path to save processed file
+BASE_DIR = r"C:\Users\hp\Desktop\Git-course\EduPro_Project-main (1)\EduPro_Project_variations"
+DATA_DIR = os.path.join(BASE_DIR, "data")
+FINAL_FILE = os.path.join(DATA_DIR, "final_data.csv")
 
-# Check file exists
-if not os.path.exists(input_path):
-    print("❌ Input file NOT found:", input_path)
-else:
-    print("✅ Input file found")
+# Make sure data folder exists
+os.makedirs(DATA_DIR, exist_ok=True)
 
-    # Load data
-    df = pd.read_csv(input_path)
+# -------------------
+# Step 2: Preprocess Function
+# -------------------
+def preprocess_data():
+    # Check if raw dataset exists
+    if not os.path.exists(RAW_FILE):
+        print("ERROR: Raw dataset not found!")
+        print(f"Expected file at: {RAW_FILE}")
+        sys.exit(1)
 
-    print("✅ Data loaded")
+    # Load dataset based on file extension
+    if RAW_FILE.lower().endswith(".xlsx"):
+        print("Loading Excel file...")
+        df = pd.read_excel(RAW_FILE)
+    elif RAW_FILE.lower().endswith(".csv"):
+        print("Loading CSV file...")
+        df = pd.read_csv(RAW_FILE)
+    else:
+        print("ERROR: Unsupported file type. Use .csv or .xlsx")
+        sys.exit(1)
 
-    # Basic cleaning
-    df.dropna(inplace=True)
+    # -------------------
+    # Step 3: Cleaning
+    # -------------------
+    df.drop_duplicates(inplace=True)
+    df.fillna(0, inplace=True)
+    df.columns = [col.strip().lower().replace(" ", "_") for col in df.columns]
 
-    # Create data folder
-    os.makedirs("data", exist_ok=True)
+    # -------------------
+    # Step 4: Add instructor_rating if missing (1-5 scale)
+    # -------------------
+    if 'instructor_rating' not in df.columns:
+        np.random.seed(42)
+        df['instructor_rating'] = np.random.randint(1, 6, size=len(df))
 
-    # Save cleaned file
-    output_path = os.path.join("data", "final_data.csv")
-    df.to_csv(output_path, index=False)
+    # -------------------
+    # Step 5: Save processed data
+    # -------------------
+    df.to_csv(FINAL_FILE, index=False)
+    print(f"Processed data saved at: {FINAL_FILE}")
 
-    print("✅ File saved at:", os.path.abspath(output_path))
+# -------------------
+# Step 6: Run
+# -------------------
+if __name__ == "__main__":
+    preprocess_data()
