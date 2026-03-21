@@ -1,26 +1,30 @@
 import pandas as pd
-import numpy as np
+import os
 
-# Load dataset
-df = pd.read_csv("C:/Users/hp/Downloads/EduPro Online Platform.xlsx - Users.csv")
+print("🚀 Starting preprocessing...")
 
-# Create new columns
-np.random.seed(42)
+# Correct path (FIXED)
+input_path = r"C:\Users\hp\Downloads\EduPro Online Platform.xlsx - Users.csv"
 
-df["Experience"] = np.random.randint(1, 11, len(df))
+# Check file exists
+if not os.path.exists(input_path):
+    print("❌ Input file NOT found:", input_path)
+else:
+    print("✅ Input file found")
 
-df["Expertise"] = np.random.choice(
-    ["Data Science", "Web Dev", "Machine Learning", "Cyber Security"],
-    len(df)
-)
+    # Load data
+    df = pd.read_csv(input_path)
 
-df["TeacherRating"] = np.round(np.random.uniform(3.5, 5.0, len(df)), 2)
+    print("✅ Data loaded")
 
-df["CourseRating"] = np.round(
-    df["TeacherRating"] - np.random.uniform(0, 0.5, len(df)), 2
-)
+    # Basic cleaning
+    df.dropna(inplace=True)
 
-# Save new file
-df.to_csv("data/final_data.csv", index=False)
+    # Create data folder
+    os.makedirs("data", exist_ok=True)
 
-print("✅ Preprocessing Done!")
+    # Save cleaned file
+    output_path = os.path.join("data", "final_data.csv")
+    df.to_csv(output_path, index=False)
+
+    print("✅ File saved at:", os.path.abspath(output_path))
