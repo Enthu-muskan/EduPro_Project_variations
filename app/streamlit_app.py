@@ -6,10 +6,10 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # -------------------
-# Paths
+# Paths (relative)
 # -------------------
-BASE_DIR = r"C:\Users\hp\Desktop\Git-course\EduPro_Project-main (1)\EduPro_Project_variations"
-DATA_DIR = os.path.join(BASE_DIR, "data")
+BASE_DIR = os.path.dirname(__file__)  # directory of this script
+DATA_DIR = os.path.join(BASE_DIR, "../data")  # go up one level, then data/
 FINAL_FILE = os.path.join(DATA_DIR, "final_data.csv")
 
 # -------------------
@@ -39,14 +39,14 @@ st.title("EduPro Instructor Performance Dashboard")
 # -------------------
 # KPIs
 # -------------------
-total_instructors = df[instructor_col].nunique()
+total_instructors = df[instructor_col].nunique() if instructor_col in df.columns else 0
 total_users = df['userid'].nunique() if 'userid' in df.columns else 0
 average_rating = df['instructor_rating'].mean() if 'instructor_rating' in df.columns else 0
 
 col1, col2, col3 = st.columns(3)
 col1.metric("Total Instructors", total_instructors)
 col2.metric("Total Users", total_users)
-col3.metric("Average Rating", round(average_rating, 2))
+col3.metric("Average Instructor Rating", round(average_rating, 2))
 
 st.markdown("---")
 
@@ -83,26 +83,26 @@ def plot_box(x_col, y_col, title):
 # -------------------
 # Show EDA Charts
 # -------------------
-st.subheader("Instructor Rating Distribution")
 if 'instructor_rating' in df.columns:
+    st.subheader("Instructor Rating Distribution")
     plot_hist('instructor_rating', "Instructor Rating Distribution", color='skyblue', bins=5)
 
-st.subheader("Age Distribution")
 if 'age' in df.columns:
+    st.subheader("Age Distribution")
     plot_hist('age', "Age Distribution of Users", color='orange', bins=20)
 
-st.subheader("Gender Distribution")
 if 'gender' in df.columns:
+    st.subheader("Gender Distribution")
     plot_bar('gender', "Gender Distribution")
 
-st.subheader("Instructor Rating by Age (Sampled)")
 if 'instructor_rating' in df.columns and 'age' in df.columns:
+    st.subheader("Instructor Rating by Age (Sampled)")
     plot_box('age', 'instructor_rating', "Instructor Rating by Age")
 
 # -------------------
-# Optional: Top 10 Users by Rating
+# Top 10 Users by Rating
 # -------------------
-st.subheader("Top 10 Users by Instructor Rating")
 if 'instructor_rating' in df.columns and 'username' in df.columns:
+    st.subheader("Top 10 Users by Instructor Rating")
     top_users = df[['username', 'instructor_rating']].sort_values(by='instructor_rating', ascending=False).head(10)
     st.dataframe(top_users)
