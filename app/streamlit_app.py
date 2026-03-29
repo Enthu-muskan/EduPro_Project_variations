@@ -6,6 +6,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # -------------------
+# THE FIX: page_config MUST be the very first Streamlit command
+# -------------------
+st.set_page_config(page_title="EduPro Instructor Dashboard", layout="wide")
+
+# -------------------
 # Paths (relative)
 # -------------------
 BASE_DIR = os.path.dirname(__file__)  # directory of this script
@@ -33,7 +38,6 @@ instructor_col = 'instructor_name' if 'instructor_name' in df.columns else 'user
 # -------------------
 # Dashboard Title
 # -------------------
-st.set_page_config(page_title="EduPro Instructor Dashboard", layout="wide")
 st.title("EduPro Instructor Performance Dashboard")
 
 # -------------------
